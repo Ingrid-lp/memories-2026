@@ -277,5 +277,7 @@ app.get('/sentiments/:userId', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
+    fetch('/login')
+fetch('/register')
+fetch('/memories');
 });
