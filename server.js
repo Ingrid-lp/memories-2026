@@ -26,6 +26,8 @@ app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(bodyParser.json());
 
+app.use(express.static(__dirname));
+
 // Configurações do seu banco de dados MySQL
 const db = mysql.createConnection({
     host: 'wagnerweinert.com.br',
