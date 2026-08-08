@@ -32,6 +32,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullImageCaption = document.getElementById("full-image-caption");
     const closeFullScreenBtn = fullScreenImageModal.querySelector(".close-btn"); // Seleciona o 'x' do modal
 
+    // --- FUNÇÕES AUXILIARES DE FORMATAÇÃO ---
+
+    // NOVO: Converte data ISO (yyyy-mm-dd, formato do banco/input) para formato brasileiro (dd/mm/yyyy)
+    const formatDateBR = (isoDate) => {
+        if (!isoDate) return null;
+        // Fatiamos a string diretamente (em vez de usar new Date()) para evitar
+        // bug de fuso horário que "volta" um dia na conversão.
+        const [year, month, day] = isoDate.split("-");
+        if (!year || !month || !day) return isoDate; // fallback, caso venha em outro formato
+        return `${day}/${month}/${year}`;
+    };
+
     // --- FUNÇÕES DE DIÁLOGO CUSTOMIZADAS ---
 
     const showCustomAlert = (message, type = 'success', duration = 3000) => {
@@ -259,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentAlbumId) {
                 emptyState.querySelector("p").textContent =
                     `Não há memórias neste álbum! Se quiser colocar algumas memórias, aperte no botão acima "Adicionar" para adicionar memórias que já existem.`
-                emptyState.querySelector(".empty-icon").textContent = "ALBUM VAZIO :("
+                emptyState.querySelector(".empty-icon").textContent = "ÁLBUM VAZIO :("
             } else {
                 emptyState.querySelector("p").textContent =
                     'Você ainda não possui memórias, Mas sem problemas! Vá em "Adicionar Memórias" para começar seu mapa de memórias.'
@@ -315,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="memory-details-view">
                   <h3>${memory.title || "Sem título"}</h3>
                   <p><strong>Sentimento:</strong> ${memory.sentiment || "Não informado"}</p>
-                  <p><strong>Data:</strong> ${memory.date || "Não informada"}</p>
+                  <p><strong>Data:</strong> ${formatDateBR(memory.date) || "Não informada"}</p>
                    <h3>...</h3>
                   <p><strong></strong> ${memory.description || "Sem descrição"}</p>
               </div>
@@ -351,6 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("memory-id").value = memoryToEdit.id
                     document.getElementById("memory-title").value = memoryToEdit.title
                     document.getElementById("memory-description").value = memoryToEdit.description
+                    // Mantém formato ISO (yyyy-mm-dd) aqui, pois é o que o <input type="date"> exige
                     document.getElementById("memory-date").value = memoryToEdit.date
 
                     memorySentimentInput.value = memoryToEdit.sentiment || ""
@@ -489,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     createAlbumLink.addEventListener("click", async(e) => {
         e.preventDefault()
-        const albumTitle = await customPrompt("Qual será o nome desse album?")
+        const albumTitle = await customPrompt("Qual será o nome desse álbum?")
 
         if (albumTitle) {
             try {
